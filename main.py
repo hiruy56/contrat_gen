@@ -1,21 +1,10 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from docx import Document
-from fastapi.middleware.cors import CORSMiddleware
 import os
 from io import BytesIO
 
 app = FastAPI()
-
-# Configure CORS
-origins = ["*"]  # Replace "*" with the specific origins you want to allow
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 def generate_contract(client_name: str) -> Document:
     # Load the Word document template
@@ -32,6 +21,7 @@ def replace_text(paragraph, placeholder, value):
     if placeholder in paragraph.text:
         for run in paragraph.runs:
             run.text = run.text.replace(placeholder, value)
+
 
 @app.get('/generate-contract', response_class=StreamingResponse)
 async def generate_contract_api(client_name: str):
