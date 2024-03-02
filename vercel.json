@@ -1,8 +1,21 @@
 {
-    "builds": [
-      {"src": "main.py", "use": "@vercel/python"}
-    ],
-    "routes": [
-      {"src": "/(.*)", "dest": "main.py"}
-    ]
-  }
+  "functions": {
+    "api/generate-contract": {
+      "runtime": "@vercel/python",
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/generate-contract",
+      "methods": ["GET"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ]
+}
