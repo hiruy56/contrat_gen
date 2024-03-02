@@ -1,21 +1,19 @@
 {
-  "functions": {
-    "api/generate-contract": {
-      "runtime": "@vercel/python",
-    }
-  },
+  "builds": [
+    {"src": "main.py", "use": "@vercel/python"}
+  ],
   "routes": [
+    {"src": "/(.*)", "dest": "main.py"}
+  ],
+  "headers": [
     {
-      "src": "/api/generate-contract",
-      "methods": ["GET"],
-      "headers": {
-        "Access-Control-Allow-Origin": "*"
-      },
-      "continue": true
-    },
-    {
-      "src": "/(.*)",
-      "dest": "main.py"
+      "source": "/(.*)",  // You can adjust the source pattern based on your needs
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
     }
   ]
 }
