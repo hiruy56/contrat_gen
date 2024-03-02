@@ -7,7 +7,7 @@
   ],
   "headers": [
     {
-      "source": "/generate-contract",
+      "source": "./",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
