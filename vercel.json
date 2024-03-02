@@ -7,7 +7,7 @@
   ],
   "headers": [
     {
-      "source": "/(.*)",  // You can adjust the source pattern based on your needs
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
