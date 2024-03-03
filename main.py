@@ -3,11 +3,11 @@ from fastapi.responses import StreamingResponse
 from docx import Document
 import os
 from io import BytesIO
-from datetime import datetime
 
 app = FastAPI()
 
 def generate_contract(client_name: str, date1: str, date: str, nationality: str, telephone: str, price: str) -> Document:
+    # Replace this with the actual path to your template document
     template_path = os.path.abspath('tomp.docx')
     doc = Document(template_path)
 
@@ -18,8 +18,8 @@ def generate_contract(client_name: str, date1: str, date: str, nationality: str,
     return doc
 
 def replace_text(paragraph, replacements):
-    for placeholder, value in replacements.items():
-        for run in paragraph.runs:
+    for run in paragraph.runs:
+        for placeholder, value in replacements.items():
             run.text = run.text.replace(placeholder, value)
 
 @app.get('/generate-contract', response_class=StreamingResponse)
