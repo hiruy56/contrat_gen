@@ -3,35 +3,29 @@ from fastapi.responses import StreamingResponse
 from docx import Document
 import os
 from io import BytesIO
-from datetime import datetime  # Import the datetime module
+from datetime import datetime
 
 app = FastAPI()
 
-def generate_contract(client_name: str, date1: str,date: str, nationality: str, telephone: str, price: str) -> Document:
-    # Load the Word document template
+def generate_contract(client_name: str, date1: str, date: str, nationality: str, telephone: str, price: str) -> Document:
     template_path = os.path.abspath('tomp.docx')
     doc = Document(template_path)
 
     # Replace placeholders with actual values
     for paragraph in doc.paragraphs:
-        replace_text(paragraph, '{name}', client_name)
-        replace_text(paragraph, '{date1}', date1)
-        replace_text(paragraph, '{date}', date)
-        replace_text(paragraph, '{nationality}', nationality)
-        replace_text(paragraph, '{telephone}', telephone)
-        replace_text(paragraph, '{price}', price)
+        replace_text(paragraph, {'{name}': client_name, '{date1}': date1, '{date}': date, '{nationality}': nationality, '{telephone}': telephone, '{price}': price})
 
     return doc
 
-def replace_text(paragraph, placeholder, value):
-    if placeholder in paragraph.text:
+def replace_text(paragraph, replacements):
+    for placeholder, value in replacements.items():
         for run in paragraph.runs:
             run.text = run.text.replace(placeholder, value)
 
 @app.get('/generate-contract', response_class=StreamingResponse)
 async def generate_contract_api(
     client_name: str,
-    date1: str,  # Changed parameter name from date to date1
+    date1: str,
     date: str,
     nationality: str,
     telephone: str,
