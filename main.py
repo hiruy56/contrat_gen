@@ -6,14 +6,6 @@ from io import BytesIO
 
 app = FastAPI()
 
-origins = ["*"]  # Change this to the appropriate origin or list of origins
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 def generate_contract(client_name: str) -> Document:
     # Load the Word document template
