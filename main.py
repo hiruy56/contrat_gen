@@ -6,32 +6,39 @@ from io import BytesIO
 
 app = FastAPI()
 
-def generate_contract(client_name: str, date1: str, date: str, nationality: str, telephone: str, price: str) -> Document:
+def generate_contract(client_name: str, date1: str, date2: str, nationality: str, telephone: str, price: str) -> Document:
     # Replace this with the actual path to your template document
     template_path = os.path.abspath('tomp.docx')
     doc = Document(template_path)
 
     # Replace placeholders with actual values
-    for paragraph in doc.paragraphs:
-        replace_text(paragraph, {'{name}': client_name, '{date1}': date1, '{date}': date, '{nationality}': nationality, '{telephone}': telephone, '{price}': price})
+    replace_text(doc, {
+        '{name}': client_name,
+        '{date1}': date1,
+        '{date2}': date2,
+        '{nationality}': nationality,
+        '{telephone}': telephone,
+        '{price}': price
+    })
 
     return doc
 
-def replace_text(paragraph, replacements):
-    for run in paragraph.runs:
-        for placeholder, value in replacements.items():
-            run.text = run.text.replace(placeholder, value)
+def replace_text(doc, replacements):
+    for paragraph in doc.paragraphs:
+        for run in paragraph.runs:
+            for placeholder, value in replacements.items():
+                run.text = run.text.replace(placeholder, value)
 
 @app.get('/generate-contract', response_class=StreamingResponse)
 async def generate_contract_api(
     client_name: str,
     date1: str,
-    date: str,
+    date2: str,
     nationality: str,
     telephone: str,
     price: str
 ):
-    filled_contract = generate_contract(client_name, date1, date, nationality, telephone, price)
+    filled_contract = generate_contract(client_name, date1, date2, nationality, telephone, price)
 
     # Save the filled contract to a BytesIO stream
     stream = BytesIO()
