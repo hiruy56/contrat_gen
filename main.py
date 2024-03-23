@@ -1,11 +1,13 @@
+import tempfile
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from docx import Document
-from starlette.responses import FileResponse
 import os
+from fastapi.responses import StreamingResponse
+from io import BytesIO
 
 app = FastAPI()
 
-def fill_contract_template(contract_details, output_path):
+def fill_contract_template(contract_details):
     template_path = os.path.abspath('tomp.docx')
 
     # Load the template document
@@ -25,12 +27,14 @@ def fill_contract_template(contract_details, output_path):
                         if f"{{{key}}}" in paragraph.text:
                             paragraph.text = paragraph.text.replace(f"{{{key}}}", str(value))
 
-    # Save the filled contract to the output path
-    doc.save(output_path)
-    return output_path
+    # Save the filled contract to a BytesIO stream
+    stream = BytesIO()
+    doc.save(stream)
+    stream.seek(0)
+
+    return stream
 
 @app.post("/fill-contract")
 async def fill_contract(contract_details: dict):
-    output_path = os.path.abspath('filled_contract.docx')
-    filled_contract_path = fill_contract_template(contract_details, output_path)
-    return {"download_link": f"https://contrat-98hsvouwo-hiruy56.vercel.app/{filled_contract_path}"}
+    filled_contract_stream = fill_contract_template(contract_details)
+    return StreamingResponse(content=filled_contract_stream, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
