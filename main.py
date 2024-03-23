@@ -12,7 +12,19 @@ def generate_contract(name: str, date0: str, date: str, nationality: str, teleph
     doc = Document(template_path)
 
     # Replace placeholders with actual values
-    replacements = {'{name}': name, '{date0}': date0, '{date}': date, '{nationality}': nationality, '{telephone}': telephone, '{price}': price, '{date1}': date1, '{datepay}': datepay, '{date2}': date2, '{date3}': date3, '{name1}': name1}
+    replacements = {
+        '{name}': name,
+        '{date0}': date0,
+        '{date}': date,
+        '{nationality}': nationality,
+        '{telephone}': telephone,
+        '{price}': price,
+        '{date1}': date1,
+        '{datepay}': datepay,
+        '{date2}': date2,
+        '{date3}': date3,
+        '{name1}': name1
+    }
     
     for paragraph in doc.paragraphs:
         replace_text(paragraph, replacements)
