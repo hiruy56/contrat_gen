@@ -27,11 +27,10 @@ def fill_contract_template(contract_details, output_path):
 
     # Save the filled contract to the output path
     doc.save(output_path)
+    return output_path
 
 @app.post("/fill-contract")
 async def fill_contract(contract_details: dict):
     output_path = os.path.abspath('filled_contract.docx')
-
-    fill_contract_template(contract_details, output_path)
-
-    return FileResponse(output_path, media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    filled_contract_path = fill_contract_template(contract_details, output_path)
+    return {"download_link": f"https://contrat-98hsvouwo-hiruy56.vercel.app/{filled_contract_path}"}
