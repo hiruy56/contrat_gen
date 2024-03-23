@@ -6,39 +6,39 @@ from io import BytesIO
 
 app = FastAPI()
 
-def generate_contract(client_name: str, date1: str, date2: str, nationality: str, telephone: str, price: str) -> Document:
+def generate_contract(name: str, date0: str, date: str, nationality: str, telephone: str, price: str, date1: str, datepay: str, date2: str, date3: str, name1: str) -> Document:
     # Replace this with the actual path to your template document
     template_path = os.path.abspath('tomp.docx')
     doc = Document(template_path)
 
     # Replace placeholders with actual values
-    replace_text(doc, {
-        '{name}': client_name,
-        '{date1}': date1,
-        '{date2}': date2,
-        '{nationality}': nationality,
-        '{telephone}': telephone,
-        '{price}': price
-    })
+    replacements = {'{name}': name, '{date0}': date0, '{date}': date, '{nationality}': nationality, '{telephone}': telephone, '{price}': price, '{date1}': date1, '{datepay}': datepay, '{date2}': date2, '{date3}': date3, '{name1}': name1}
+    
+    for paragraph in doc.paragraphs:
+        replace_text(paragraph, replacements)
 
     return doc
 
-def replace_text(doc, replacements):
-    for paragraph in doc.paragraphs:
-        for run in paragraph.runs:
-            for placeholder, value in replacements.items():
-                run.text = run.text.replace(placeholder, value)
+def replace_text(paragraph, replacements):
+    for run in paragraph.runs:
+        for placeholder, value in replacements.items():
+            run.text = run.text.replace(placeholder, value)
 
 @app.get('/generate-contract', response_class=StreamingResponse)
 async def generate_contract_api(
-    client_name: str,
-    date1: str,
-    date2: str,
+    name: str,
+    date0: str,
+    date: str,
     nationality: str,
     telephone: str,
-    price: str
+    price: str,
+    date1: str,
+    datepay: str,
+    date2: str,
+    date3: str,
+    name1: str
 ):
-    filled_contract = generate_contract(client_name, date1, date2, nationality, telephone, price)
+    filled_contract = generate_contract(name, date0, date, nationality, telephone, price, date1, datepay, date2, date3, name1)
 
     # Save the filled contract to a BytesIO stream
     stream = BytesIO()
