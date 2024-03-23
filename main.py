@@ -6,22 +6,21 @@ from io import BytesIO
 
 app = FastAPI()
 
-def generate_contract(name: str, date0: str, date: str, nationality: str, telephone: str, price: str, date1: str, datepay: str, date2: str, date3: str, name1: str) -> Document:
+def generate_contract(client_name: str, date1: str, date: str, nationality: str, telephone: str, price: str, date2: str, datepay: str, date3: str, name1: str) -> Document:
     # Replace this with the actual path to your template document
     template_path = os.path.abspath('tomp.docx')
     doc = Document(template_path)
 
     # Replace placeholders with actual values
     replacements = {
-        '{name}': name,
-        '{date0}': date0,
+        '{name}': client_name,
+        '{date1}': date1,
         '{date}': date,
         '{nationality}': nationality,
         '{telephone}': telephone,
         '{price}': price,
-        '{date1}': date1,
-        '{datepay}': datepay,
         '{date2}': date2,
+        '{datepay}': datepay,
         '{date3}': date3,
         '{name1}': name1
     }
@@ -30,6 +29,7 @@ def generate_contract(name: str, date0: str, date: str, nationality: str, teleph
         replace_text(paragraph, replacements)
 
     return doc
+
 
 def replace_text(paragraph, replacements):
     for run in paragraph.runs:
