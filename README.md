@@ -38,3 +38,43 @@ To use this API:
 - Ensure `tomp.docx` exists in the same directory as your script, containing placeholders like `{key}` that match the keys in `contract_details`.
 - Send a POST request to `http://127.0.0.1:8000/fill-contract` with JSON payload containing your contract details.
 
+### Example python code
+
+```
+import requests
+
+# Endpoint URL
+url = 'http://127.0.0.1:8000/fill-contract'
+
+# Example contract details
+contract_details = {
+    'client_name': 'John Doe',
+    'company_name': 'ABC Inc.',
+    'start_date': '2024-07-05',
+    'end_date': '2024-12-31',
+    'amount': 5000.00,
+}
+
+# Send POST request with JSON payload
+response = requests.post(url, json=contract_details)
+
+# Check response status
+if response.status_code == 200:
+    # Save the filled contract to a file
+    with open('filled_contract.docx', 'wb') as f:
+        f.write(response.content)
+    print("Filled contract saved successfully.")
+else:
+    print(f"Failed to fill contract. Status code: {response.status_code}")
+```
+
+### How to make tomp (example)
+`
+this was sined on {start_date} and end at {end_date}
+client_name: {client_name}
+company_name: {company_name}
+amount: {amount}
+`
+
+the code ubove works for the tomp example the code changes the stuff on the {}  
+
