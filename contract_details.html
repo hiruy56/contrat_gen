@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Contract Details</h1>
+    <div id="contractDetails"></div>
+
+    <button id="downloadButton">Download Contract</button>
+
+    <script>
+        // Parse contract details from query parameters
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name');
+        const nationality = params.get('nationality');
+        const telephone = params.get('telephone');
+        const duration = params.get('duration');
+        const employer = params.get('employer');
+        const price = params.get('price');
+        const date = params.get('date');
+        const datepay = params.get('datepay');
+        const date1 = params.get('date1');
+        const passport = params.get('passport');
+        const downloadLink = params.get('downloadLink'); // Added download link
+
+        // Display contract details
+        const contractDetailsContainer = document.getElementById("contractDetails");
+        contractDetailsContainer.innerHTML = `
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Nationality:</strong> ${nationality}</p>
+            <p><strong>Passport No.:</strong> ${passport}</p>
+            <p><strong>Telephone:</strong> ${telephone}</p>
+            <p><strong>Price:</strong> ${price}</p>
+            <p><strong>Date:</strong> ${date}</p>
+            <p><strong>duration:</strong> ${duration}</p>
+            <p><strong>Employer:</strong> ${employer}</p>
+            <p><strong>Date of Payment:</strong> ${datepay}</p>
+            <p><strong>Final Date:</strong> ${date1}</p>
+        `;
+
+        // Add event listener to download button
+        const downloadButton = document.getElementById("downloadButton");
+        downloadButton.addEventListener("click", () => {
+            // Trigger download
+            window.location.href = downloadLink;
+        });
+    </script>
+</body>
+</html>

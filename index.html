@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Contract Generator</h1>
+
+    <!-- Contract Form -->
+    <form id="contractForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        
+        <label for="nationality">Nationality:</label><br>
+        <input type="text" id="nationality" name="nationality"><br>
+        
+        <label for="passport">Passport:</label><br>
+        <input type="text" id="passport" name="passport"><br>
+
+        <label for="employer">Employer:</label><br>
+        <input type="text" id="employer" name="employer"><br>
+
+        <label for="duration">Duration:</label><br>
+        <input type="text" id="duration" name="duration"><br>
+        
+        <label for="telephone">Telephone:</label><br>
+        <input type="text" id="telephone" name="telephone"><br>
+        
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price"><br>
+        
+        <label for="date">Date:</label><br>
+        <input type="text" id="date" name="date"><br>
+        
+        <label for="datepay">Date of Payment:</label><br>
+        <input type="text" id="datepay" name="datepay"><br>
+        
+        <label for="date1">Final Date:</label><br>
+        <input type="text" id="date1" name="date1"><br>
+        
+        <button type="submit">Generate Contract</button>
+    </form>
+
+    <div id="responseMessage"></div>
+    <div id="contractLogs"></div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3_jaex1DPNeIzZisgvjC6ena76QIPW1w",
+            authDomain: "logs-but-beter.firebaseapp.com",
+            projectId: "logs-but-beter",
+            storageBucket: "logs-but-beter.appspot.com",
+            messagingSenderId: "568640570501",
+            appId: "1:568640570501:web:aa83c255e6c849611a15ec"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        const contractLogsContainer = document.getElementById("contractLogs");
+
+        // Fetch and display contract logs
+        async function displayContractLogs() {
+            const querySnapshot = await getDocs(collection(db, "contracts"));
+            contractLogsContainer.innerHTML = ""; // Clear previous logs
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                const contractName = data.name;
+                const contractDetails = JSON.stringify(data);
+
+                const contractLink = document.createElement("a");
+                contractLink.textContent = contractName;
+                contractLink.href = `contract_details.html?${new URLSearchParams(data).toString()}`;
+                contractLink.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    window.location.href = contractLink.href;
+                });
+
+                contractLogsContainer.appendChild(contractLink);
+                contractLogsContainer.appendChild(document.createElement("br"));
+            });
+        }
+
+        displayContractLogs();
+
+        document.getElementById("contractForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const contractDetails = {};
+            formData.forEach(function(value, key) {
+                contractDetails[key] = value;
+            });
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/fill-contract", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(contractDetails)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+
+                const blob = await response.blob();
+                const fileName = `${contractDetails.name}_contract.docx`;
+                const contractFileRef = ref(storage, `contracts/${fileName}`);
+                await uploadBytes(contractFileRef, blob);
+
+                const url = await getDownloadURL(contractFileRef);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                document.getElementById("responseMessage").innerText = "Contract generated successfully.";
+
+                await addDoc(collection(db, "contracts"), {
+                    name: contractDetails.name,
+                    nationality: contractDetails.nationality,
+                    passport: contractDetails.passport, // Add passport field to Firestore
+                    telephone: contractDetails.telephone,
+                    price: contractDetails.price,
+                    employer: contractDetails.employer,
+                    duration: contractDetails.duration,
+                    date: contractDetails.date,
+                    datepay: contractDetails.datepay,
+                    date1: contractDetails.date1,
+                    downloadLink: url
+                });
+
+                console.log("Contract details logged successfully.");
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("responseMessage").innerText = "Failed to generate contract.";
+            }
+        });
+    </script>
+</body>
+</html>
