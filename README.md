@@ -1,7 +1,7 @@
 My first paid project.
 
 
-chatgpt made docs
+chatgpt made docs i was tired ok and i am not about to stye allat
 To document the provided FastAPI application that fills in a contract template, you can follow these steps:
 
 ### Requirements
