@@ -131,7 +131,7 @@
             });
 
             try {
-                const response = await fetch("https://contract-gen-private.vercel.app/fill-contract", {
+                const response = await fetch("https://your_deploy_ip/fill-contract", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -162,7 +162,7 @@
                 await addDoc(collection(db, "contracts"), {
                     name: contractDetails.name,
                     nationality: contractDetails.nationality,
-                    passport: contractDetails.passport, // Add passport field to Firestore
+                    passport: contractDetails.passport, 
                     telephone: contractDetails.telephone,
                     price: contractDetails.price,
                     employer: contractDetails.employer,
